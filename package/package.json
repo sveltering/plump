@@ -1,6 +1,6 @@
 {
-  "name": "plump",
-  "version": "0.0.3",
+  "name": "@sveltering/plump",
+  "version": "0.0.4",
   "devDependencies": {
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-auto": "^1.0.0",
