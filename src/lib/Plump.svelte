@@ -20,6 +20,7 @@
 	const nodeName = P._nodeName,
 		children = P.$children,
 		attributes = P.$attrs,
+		innerText = P.$text,
 		hasEvents = !!Object.keys(P._events).length,
 		hasTimeouts = !!P._timeouts.length,
 		hasIntervals = !!P._intervals.length;
@@ -71,6 +72,7 @@
 </script>
 
 <svelte:element this={nodeName} bind:this={DOMelement} {...$attributes}>
+	{$innerText}
 	{#each $children as child}
 		<svelte:self P={child} />
 	{/each}

@@ -12,6 +12,7 @@ class Plump {
 	_position: number = 0;
 	$children: ArrayStore<Plump> = arrayStore([]);
 	$attrs: KeyValueStore<string> = keyValueStore({});
+	$text: WritableStore<string> = writableStore('');
 
 	_events: { [eventName: string]: { callback: CallableFunction; options: {} }[] } = {};
 	_timeouts: { callback: CallableFunction; time: number; timeoutId?: number }[] = [];
@@ -93,7 +94,10 @@ class Plump {
 		};
 		return this;
 	}
-
+	text(innerText: string): this {
+		this.$text.value = innerText;
+		return this;
+	}
 	get $siblings(): ArrayStore<Plump> {
 		return this._parent.$children;
 	}
@@ -112,8 +116,11 @@ class Plump {
 		Plump.__resetIndexes($siblings);
 		return plucked;
 	}
-	protected __append__or__prepend(element: string | Plump, action: 'push' | 'unshift'): void {
-		if (typeof element === 'string') {
+	protected __append__or__prepend(element: string, action: 'push' | 'unshift'): Plump;
+	protected __append__or__prepend(element: Plump, action: 'push' | 'unshift'): this;
+	protected __append__or__prepend(element: any, action: 'push' | 'unshift'): any {
+		let newElement = typeof element === 'string';
+		if (newElement) {
 			element = P(element);
 		}
 		this.__pluckElementFromParent(element);
@@ -121,6 +128,7 @@ class Plump {
 		let $children = this.$children;
 		$children.value[action](element);
 		Plump.__resetIndexes($children);
+		return newElement ? element : this;
 	}
 
 	protected __insert(element: Plump, after: boolean = true): this {
@@ -143,6 +151,7 @@ class Plump {
 		}
 	}
 	empty(): this {
+		this.$text.value = '';
 		if (this?.$children) {
 			let children = this.$children.value;
 			if (children.length) {
@@ -158,13 +167,16 @@ class Plump {
 		this.__remove();
 	}
 
-	append(element: string | Plump): this {
-		this.__append__or__prepend(element, 'push');
-		return this;
+	append(element: string): Plump;
+	append(element: Plump): this;
+	append(element: any): any {
+		return this.__append__or__prepend(element, 'push');
 	}
-	prepend(element: string | Plump): this {
-		this.__append__or__prepend(element, 'unshift');
-		return this;
+
+	prepend(element: string): Plump;
+	prepend(element: Plump): this;
+	prepend(element: any): any {
+		return this.__append__or__prepend(element, 'unshift');
 	}
 	appendTo(element: Plump): this {
 		element.append(this);
