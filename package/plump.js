@@ -66,7 +66,9 @@ class Plump {
         if (!attrs) {
             return this.$attrs.value;
         }
-        attrs = attrs.map((e) => e + '');
+        for (let attr in attrs) {
+            attrs[attr] = attrs[attr] + '';
+        }
         this.$attrs.value = {
             ...this.$attrs.value,
             ...attrs
